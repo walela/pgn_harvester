@@ -3,3 +3,4 @@ This page is for issues or feature requests
 
 
 1.Game id slicing doesn't work for 9-figure ids
+2.Script downloads for only one page.Need it to work for all pages available.
