@@ -1,0 +1,5 @@
+This page is for issues or feature requests
+
+
+
+1.Game id slicing doesn't work for 9-figure ids
