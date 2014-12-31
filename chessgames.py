@@ -20,7 +20,7 @@ for link in soup.select('a[href^=/livechess/game?id=]'):
 #extract the actual ids into a list
 newerids = []
 for gameid in gameids:
-	newid = gameid[-10:]
+	newid = gameid.split("?id=")[1]
 	newerids.append(newid)
 
 #download ze freakin games.Python wins :)
