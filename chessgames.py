@@ -1,30 +1,52 @@
+#!/usr/bin/env python
+
 #import the scraping libs
 import requests
-import urllib
+import urllib2
+import pickle
 from bs4 import BeautifulSoup
 
-#get the user details
-username = raw_input("Please enter the EXACT chess.com username of the user whose games you wish to download:")
-userurl = "http://www.chess.com/home/game_archive?sortby=&show=live&member=%s"%username
+def get_game_ids(userurl, page): 
+	# Access user's game archive and return list of game ids
+	try:
+		r = requests.get(userurl)
+		soup = BeautifulSoup(r.content)
+		gameids= []
+		for link in soup.select('a[href^=/livechess/game?id=]'):
+			gameid = link['href'].split("?id=")[1]
+			gameids.append(int(gameid))
+		return gameids
+	except Exception as e:
+		print "%s" % str(e)
+		return False
 
-#get the html for the relevant page,where we'll extract the game ids using BeautifulSoup
-r = requests.get(userurl)
-soup = BeautifulSoup(r.content)
-#list for initial BeautifulSoup extract coz I don't know how to extract them directly
-gameids = []
+def get_games(gameids):
+	# Extract each game from list of ids
+	try:
+		games = []
+		for gameid in gameids:
+			fileurl = "http://www.chess.com/echess/download_pgn?lid=%d" % gameid
+			games.append(urllib2.urlopen(fileurl).read())
+		return games
+	except Exception as e:
+		print "%s" % str(e)
+		return False
 
-#outputs some links like : /livechess/game?id=1004499200.Bam.We got our ids
-for link in soup.select('a[href^=/livechess/game?id=]'):
-	gameids.append(link['href'])
+if __name__ == "__main__":
+	username = raw_input("Enter chess.com username: ")
+	userurl = "http://www.chess.com/home/game_archive?sortby=&show=live&member=%s"%username
+	page = ""
+	gameids = get_game_ids(userurl, page)
+	print "\nAccessing game archive for: %s" % username
+	games = get_games(gameids)
+	if len(games) <> 0:
+		for game in games:
+			print game
+		filename = "%s.p" % username
+		pickle.dump(games, open(filename, "wb"))
+		print "\n\nGames saved in file: %s.p" % username
+		print "\nTotal games harvested: %d" % len(games)
+		print "\n"
+	else:
+		print "\nNo games found for user: %s\n" % username
 
-#extract the actual ids into a list
-newerids = []
-for gameid in gameids:
-	newid = gameid.split("?id=")[1]
-	newerids.append(newid)
-
-#download ze freakin games.Python wins :)
-for newid in newerids:
-	idnum = int(newid)
-	fileurl = "http://www.chess.com/echess/download_pgn?lid=%d" %idnum
-	urllib.urlretrieve(fileurl,"%d.pgn" %idnum)
