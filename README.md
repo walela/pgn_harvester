@@ -1,3 +1,3 @@
 chesscompgnscrape
 =================
-This script connects to chess.com and downloads individual games for a specified user.All games are merged output into one pgn file.
+This script connects to chess.com and downloads individual games for a specified user.All games are merged and output into one pgn file.
