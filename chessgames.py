@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
 #import the scraping libs
-import os
 import requests
 import urllib2
-import pickle
 from bs4 import BeautifulSoup
-from os import listdir
-from os.path import isfile, join
 
 def get_game_ids(userurl, page):
 	# Access user's game archive and return list of game ids
