@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
 #import the scraping libs
+import os
 import requests
 import urllib2
 import pickle
 from bs4 import BeautifulSoup
+from os import listdir
+from os.path import isfile, join
 
-def get_game_ids(userurl, page): 
+def get_game_ids(userurl, page):
 	# Access user's game archive and return list of game ids
 	try:
 		r = requests.get(userurl)
@@ -32,6 +35,11 @@ def get_games(gameids):
 		print "%s" % str(e)
 		return False
 
+def merge_games(gamelist,filename):
+	with open(filename,"w") as mergefile:
+		for game in gamelist:
+			mergefile.write("%s\n\n" %game)
+
 if __name__ == "__main__":
 	username = raw_input("Enter chess.com username: ")
 	userurl = "http://www.chess.com/home/game_archive?sortby=&show=live&member=%s"%username
@@ -39,12 +47,12 @@ if __name__ == "__main__":
 	gameids = get_game_ids(userurl, page)
 	print "\nAccessing game archive for: %s" % username
 	games = get_games(gameids)
-	if len(games) <> 0:
+	if len(games) > 0:
 		for game in games:
 			print game
-		filename = "%s.p" % username
-		pickle.dump(games, open(filename, "wb"))
-		print "\n\nGames saved in file: %s.p" % username
+		filename = "%s.pgn" % username
+		merge_games(games,filename)
+		print "\n\nGames saved in file: %s.pgn" % username
 		print "\nTotal games harvested: %d" % len(games)
 		print "\n"
 	else:
