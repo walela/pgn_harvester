@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+try:
+	import urllib.request as urllib2
+except ImportError:
+	import urllib2
 
-import urllib2
 import requests
-from urlparse import urljoin
+from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
 def get_game_ids(username):
@@ -30,7 +33,7 @@ def get_game_ids(username):
 				break
 		return game_ids
 	except Exception as e:
-		print "%s" % str(e)
+		print("%s" % str(e))
 		return False
 
 def get_games(game_ids):
@@ -45,7 +48,7 @@ def get_games(game_ids):
 			games.append(urllib2.urlopen(fileurl).read())
 		return games
 	except Exception as e:
-		print "%s" % str(e)
+		print("%s" % str(e))
 		return False
 
 def merge_games(game_list,filename):
@@ -58,16 +61,16 @@ def merge_games(game_list,filename):
 			mergefile.write("%s\n\n" % game)
 
 if __name__ == "__main__":
-	username = raw_input("Enter chess.com username: ")
+	username = input("Enter chess.com username: ")
 	gameids = get_game_ids(username)
-	print "\nAccessing game archive for: %s" % username
+	print ("\nAccessing game archive for: %s" % username)
 	game_list = get_games(gameids)
 	if len(game_list) > 0:
 		filename = "%s.pgn" % username
 		merge_games(game_list,filename)
-		print "\n\nGames saved in file: %s.pgn" % username
-		print "\nTotal games harvested: %d" % len(game_list)
-		print "\n"
+		print("\n\nGames saved in file: %s.pgn" % username)
+		print("\nTotal games harvested: %d" % len(game_list))
+		print("\n")
 	else:
-		print "\nNo games found for user: %s\n" % username
+		print("\nNo games found for user: %s\n" % username)
 
